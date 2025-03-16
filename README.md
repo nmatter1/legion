@@ -2,7 +2,7 @@
 Headless Minecraft client written in python. Simulate any amount of players on offline servers.
 
 ## Progress
-This library currently handles
+This library is currently in development and not ready for production. Features currently implemented:
 - [x] knockback physics
 - [x] gravity
 - [x] player connections
