@@ -3,8 +3,9 @@ Headless Minecraft client written in python
 
 Simulate any amount of players on offline servers
 
-Currently a work in progress. Next update will include receiving chunk data packets
+This library currently handles knockback physics, gravity, player connections, and heightmaps. The next update will include chunk data packets.
 
+https://github.com/user-attachments/assets/f639a928-c296-490a-854f-5028942386a4
 
 ## Usage
 Install the requirements pip install -r requirements.txt
