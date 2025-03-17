@@ -1,5 +1,5 @@
 # Legion
-Headless Minecraft client written in python. Simulate any amount of players on offline servers.
+Headless Minecraft client written in python. Simulate any amount of players on offline servers without multiple accounts and low resource utilization.
 
 ## Progress
 This library is currently in development and not ready for production. Features currently implemented:
