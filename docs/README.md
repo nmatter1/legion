@@ -16,4 +16,4 @@ This library is currently in development and not ready for production. Features 
 
 Fake players will iniate a connection and join the server with random usernames
 
-https://github.com/user-attachments/assets/f639a928-c296-490a-854f-5028942386a4
+<iframe width="420" height="315" src="https://github.com/user-attachments/assets/f639a928-c296-490a-854f-5028942386a4" frameborder="0" allowfullscreen></iframe>
