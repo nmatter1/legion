@@ -1,1 +1,11 @@
-documentation and tutorials coming soon
+---
+layout: blog
+title: Another page
+description: This is just another page
+---
+
+## Welcome to another page
+
+_yay_
+
+[back](./)
