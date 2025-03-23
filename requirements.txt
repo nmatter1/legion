@@ -3,6 +3,7 @@ asyncio-dgram==2.2.0
 certifi==2025.1.31
 cffi==1.17.1
 cryptography==41.0.7
+cryptology==0.0.14
 exceptiongroup==1.2.2
 Faker==37.0.2
 h11==0.14.0
