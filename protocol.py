@@ -6,7 +6,9 @@ import json
 import datetime
 from dataclasses import dataclass
 
+from chunks import read_chunk 
 from nbt import read_nbt
+
 from buffer import Buffer
 
 from mcproto.connection import TCPAsyncConnection
@@ -25,6 +27,24 @@ class Colors:
     ENDC = '\033[0m'
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
+
+def block_from_id(block_id: int) -> str:
+    blocks = cache_pool.get("blocks", None) 
+    
+    if blocks is None:
+        with open("./blocks.json", "r") as file:
+            blocks = json.load(file)
+            cache_pool["blocks"] = blocks 
+    
+    assert blocks is not None, "blocks registry missing"
+
+    for block_name in blocks:
+        data = blocks[block_name]
+        for state in data["states"]:
+            if state["id"] == block_id:
+                return block_name
+
+    return f"{hex(block_id)}" 
 
 def serialize_packet(p_id: int) -> str:
     packets = cache_pool.get("packets", None) 
@@ -84,7 +104,7 @@ class PacketWrapper():
         buffer.write_varint(status) 
         await send(connection, buffer)
     
-    async def send_chunk_received(self, connection: TCPAsyncConnection, chunks_per_tick: int):
+    async def send_chunk_received(self, connection, chunks_per_tick: int):
         """
         Notifies the server that the chunk batch has been received by the client
 
@@ -134,41 +154,8 @@ class CraftPlayer():
             chunk_y = buff.read_varint()
         elif p_id == 0x0d: # minecraft:chunk_batch_start
             datetime.datetime.now()
-        
         elif p_id == 0x28: # minecraft:level_chunk_with_light
-            chunk_x = buff.read_int()
-            chunk_z = buff.read_int()
-            logging.debug(Colors.OKCYAN + f"(World): Loading chunk {chunk_x},{chunk_z}" + Colors.ENDC)
-            heightmaps = read_nbt(buff)
-            length = buff.read_varint()
-            
-            for i in range(24):
-                block_count = buff.read_short()
-                # reading paletted container
-                bits_per_entry = buff.read_ubyte()
-                assert bits_per_entry >= 0 and bits_per_entry <= 15, "Something went wrong with checking bits_per_entry"
-
-                if bits_per_entry >= 4 and bits_per_entry <= 8:
-                    palette_length = buff.read_varint()
-                    palette = []
-
-                    for _ in range(palette_length):
-                        palette.append(buff.read_varint())
-                    
-                    logging.debug(f"registry {palette[0]}")
-                    logging.debug(Colors.OKBLUE + f"(World): length={length} block_count={block_count}" + Colors.ENDC)
-            
-                    logging.debug(f"bits_per_entry={bits_per_entry}")
-                    chunk_section_length = buff.read_varint()
-                    logging.debug(f"chunk_length={chunk_section_length}")
-                    
-                    #for _ in range(chunk_section_length):
-                    #    bits = int.from_bytes(buff.read(15), 'big')
-                            
-                    #buff.read_long()
-            
-            logging.debug(buff.read(40))
-        
+            read_chunk(block_from_id, buff) 
         elif p_id == 0x01: # minecraft:add_entity
             entity_id = buff.read_varint()
             entity_uuid = buff.read(16)
@@ -246,14 +233,14 @@ class CraftPlayer():
             health = buff.read_float()
             logging.debug(f"setting health to {health}")
     
-    async def connect(self, ip: str, port: int = 25565):
+    async def connect(self, ip: str, port: int = 25565, timeout=2):
         """
         Connects the player to a server.
         """
         async with (await TCPAsyncConnection.make_client((ip, port), 2)) as connection:
             self.connection = connection
             await login(connection, self.name, ip, port)
-            await configure(connection)
+            await configure(self.connection)
             await self.respawn() 
             #asyncio.create_task(self.update_living()) 
             logging.debug("(Play): Now in play state")
