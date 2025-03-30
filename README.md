@@ -2,18 +2,19 @@
 Headless Minecraft client written in python. Simulate any amount of players on offline servers without needing multiple accounts and with low resource utilization.
 
 ## Progress
-This library is currently in development and not ready for production. Features currently implemented:
-- [x] knockback physics
-- [x] gravity
+This library is currently in heavy development. Features currently implemented:
 - [x] player connections
-- [x] heightmaps
-- [ ] Full chunk data packets (coming soon).
+- [x] login and handshake packets
+- [x] Full chunk data packets
+- [ ] Player walking
+- [ ] Physics (gravity and knockback)
+- [ ] Control web app with minimap and chunk rendering
 
 ## Usage
 1. Install the requirements pip install -r requirements.txt
-2. Start a Minecraft server on localhost:25565 and change the mode to offline
-3. Run the command python multiple.py.
+2. Run ./start.sh command to automatically install and start a vanilla 1.21.4 Minecraft server on localhost:25565 in offline mode
+3. Run the command python single.py
 
-Fake players will iniate a connection and join the server with random usernames
+A fake player will then iniate a connection, join the server, then read the chunk data at the spawn position 
 
 https://github.com/user-attachments/assets/f639a928-c296-490a-854f-5028942386a4
