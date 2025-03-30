@@ -8,6 +8,7 @@ from dataclasses import dataclass
 
 from chunks import read_chunk 
 from nbt import read_nbt
+from packets import Clientbound 
 
 from buffer import Buffer
 
@@ -15,7 +16,6 @@ from mcproto.connection import TCPAsyncConnection
 from mcproto.protocol.base_io import StructFormat
 
 logging.getLogger().setLevel(logging.DEBUG)
-cache_pool = {}
 
 class Colors:
     HEADER = '\033[95m'
@@ -28,6 +28,7 @@ class Colors:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
+cache_pool = {}
 def block_from_id(block_id: int) -> str:
     blocks = cache_pool.get("blocks", None) 
     
@@ -44,26 +45,10 @@ def block_from_id(block_id: int) -> str:
             if state["id"] == block_id:
                 return block_name
 
-    return f"{hex(block_id)}" 
+    return f"{block_id}" 
 
 def serialize_packet(p_id: int) -> str:
-    packets = cache_pool.get("packets", None) 
-    
-    if packets is None:
-        try:
-            with open("./packets.json", "r") as file:
-                packets = json.load(file)
-                cache_pool["packets"] = packets
-        except Exception as e:
-            logging.error("could not read packets information")
-    
-    pool = packets["play"]["clientbound"]
-    
-    for packet in pool:
-        if pool[packet]["protocol_id"] == p_id:
-            return f"{packet} id={hex(p_id)}"
-
-    return f"{hex(p_id)}" 
+    return Clientbound.for_id(p_id)
 
 @dataclass
 class Position():
@@ -140,7 +125,7 @@ class CraftPlayer():
     
     async def _handle(self, connection, buff: Buffer, p_id):
         """ Play state packets. The player is logged in, loaded, and configured """ 
-        if p_id == 0x5b:
+        if p_id == Clientbound.set_default_spawn_position:
             # set spawn position
             logging.debug("S->C (Play): Set spawn position")
             position = int.from_bytes(buff.read(11), byteorder="big")

@@ -12,25 +12,24 @@ def generate():
     pool = packets["play"]["clientbound"]
     
     with open("./packets.py", "w") as file:
-        file.write("from typing import Literal, Dict\n")
+        file.write("from dataclasses import dataclass\n")
         file.write("\n")
-        file.write("Protocol = Literal[\n")
+        file.write("@dataclass(frozen=True)\n")
+        file.write("class Clientbound:\n")
         
         for packet in pool:
-            protocol_id = pool[packet]["protocol_id"]
+            protocol_id = hex(pool[packet]["protocol_id"])
             packet = packet.split(":")[1]
-            file.write(f"    \"{packet}\",\n")
-        
-        file.write("]")
+            file.write(f"    {packet}: int = {protocol_id}\n")
+            
         file.write("\n")
-        file.write("clientbound: Dict[Protocol, int] = {\n")
-
-        for packet in pool:
-            protocol_id = pool[packet]["protocol_id"]
-            packet = packet.split(":")[1]
-            file.write(f"    \"{packet}\": {hex(protocol_id)},\n")
-        
-        file.write("}\n\n")
+        file.write("    @classmethod\n")
+        file.write("    def for_id(cls, p_id: int) -> str:\n")
+        file.write("        for attr, value in cls.__dict__.items():\n")
+        file.write("            if not attr.startswith('__'):  # Ignore special attributes like __module__\n")
+        file.write("                if value == p_id:\n")
+        file.write("                    return attr\n")
+        file.write("        return \"\"\n\n")
         file.flush()
         file.close()
 

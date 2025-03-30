@@ -1,0 +1,147 @@
+from dataclasses import dataclass
+from typing import Dict
+
+@dataclass(frozen=True)
+class Clientbound:
+    """add an entity"""
+    # add an entity packet
+    add_entity: int = 0x1
+    add_experience_orb: int = 0x2
+    animate: int = 0x3
+    award_stats: int = 0x4
+    block_changed_ack: int = 0x5
+    block_destruction: int = 0x6
+    block_entity_data: int = 0x7
+    block_event: int = 0x8
+    block_update: int = 0x9
+    boss_event: int = 0xa
+    bundle_delimiter: int = 0x0
+    change_difficulty: int = 0xb
+    chunk_batch_finished: int = 0xc
+    chunk_batch_start: int = 0xd
+    chunks_biomes: int = 0xe
+    clear_titles: int = 0xf
+    command_suggestions: int = 0x10
+    commands: int = 0x11
+    container_close: int = 0x12
+    container_set_content: int = 0x13
+    container_set_data: int = 0x14
+    container_set_slot: int = 0x15
+    cookie_request: int = 0x16
+    cooldown: int = 0x17
+    custom_chat_completions: int = 0x18
+    custom_payload: int = 0x19
+    custom_report_details: int = 0x81
+    damage_event: int = 0x1a
+    debug_sample: int = 0x1b
+    delete_chat: int = 0x1c
+    disconnect: int = 0x1d
+    disguised_chat: int = 0x1e
+    entity_event: int = 0x1f
+    entity_position_sync: int = 0x20
+    explode: int = 0x21
+    forget_level_chunk: int = 0x22
+    game_event: int = 0x23
+    horse_screen_open: int = 0x24
+    hurt_animation: int = 0x25
+    initialize_border: int = 0x26
+    keep_alive: int = 0x27
+    level_chunk_with_light: int = 0x28
+    level_event: int = 0x29
+    level_particles: int = 0x2a
+    light_update: int = 0x2b
+    login: int = 0x2c
+    map_item_data: int = 0x2d
+    merchant_offers: int = 0x2e
+    move_entity_pos: int = 0x2f
+    move_entity_pos_rot: int = 0x30
+    move_entity_rot: int = 0x32
+    move_minecart_along_track: int = 0x31
+    move_vehicle: int = 0x33
+    open_book: int = 0x34
+    open_screen: int = 0x35
+    open_sign_editor: int = 0x36
+    ping: int = 0x37
+    place_ghost_recipe: int = 0x39
+    player_abilities: int = 0x3a
+    player_chat: int = 0x3b
+    player_combat_end: int = 0x3c
+    player_combat_enter: int = 0x3d
+    player_combat_kill: int = 0x3e
+    player_info_remove: int = 0x3f
+    player_info_update: int = 0x40
+    player_look_at: int = 0x41
+    player_position: int = 0x42
+    player_rotation: int = 0x43
+    pong_response: int = 0x38
+    projectile_power: int = 0x80
+    recipe_book_add: int = 0x44
+    recipe_book_remove: int = 0x45
+    recipe_book_settings: int = 0x46
+    remove_entities: int = 0x47
+    remove_mob_effect: int = 0x48
+    reset_score: int = 0x49
+    resource_pack_pop: int = 0x4a
+    resource_pack_push: int = 0x4b
+    respawn: int = 0x4c
+    rotate_head: int = 0x4d
+    section_blocks_update: int = 0x4e
+    select_advancements_tab: int = 0x4f
+    server_data: int = 0x50
+    server_links: int = 0x82
+    set_action_bar_text: int = 0x51
+    set_border_center: int = 0x52
+    set_border_lerp_size: int = 0x53
+    set_border_size: int = 0x54
+    set_border_warning_delay: int = 0x55
+    set_border_warning_distance: int = 0x56
+    set_camera: int = 0x57
+    set_chunk_cache_center: int = 0x58
+    set_chunk_cache_radius: int = 0x59
+    set_cursor_item: int = 0x5a
+    set_default_spawn_position: int = 0x5b
+    set_display_objective: int = 0x5c
+    set_entity_data: int = 0x5d
+    set_entity_link: int = 0x5e
+    set_entity_motion: int = 0x5f
+    set_equipment: int = 0x60
+    set_experience: int = 0x61
+    set_health: int = 0x62
+    set_held_slot: int = 0x63
+    set_objective: int = 0x64
+    set_passengers: int = 0x65
+    set_player_inventory: int = 0x66
+    set_player_team: int = 0x67
+    set_score: int = 0x68
+    set_simulation_distance: int = 0x69
+    set_subtitle_text: int = 0x6a
+    set_time: int = 0x6b
+    set_title_text: int = 0x6c
+    set_titles_animation: int = 0x6d
+    sound: int = 0x6f
+    sound_entity: int = 0x6e
+    start_configuration: int = 0x70
+    stop_sound: int = 0x71
+    store_cookie: int = 0x72
+    system_chat: int = 0x73
+    tab_list: int = 0x74
+    tag_query: int = 0x75
+    take_item_entity: int = 0x76
+    teleport_entity: int = 0x77
+    ticking_state: int = 0x78
+    ticking_step: int = 0x79
+    transfer: int = 0x7a
+    update_advancements: int = 0x7b
+    update_attributes: int = 0x7c
+    update_mob_effect: int = 0x7d
+    update_recipes: int = 0x7e
+    update_tags: int = 0x7f
+
+    @classmethod
+    def for_id(cls, p_id: int) -> str:
+        for attr, value in cls.__dict__.items():
+            if not attr.startswith('__'):  # Ignore special attributes like __module__
+                if value == p_id:
+                    return attr
+        return ""
+
