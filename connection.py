@@ -4,9 +4,12 @@ import socket
 import struct
 from typing import Tuple
 from enum import Enum 
+import logging
 
-class T(str, Enum):
+class T(Enum):
     LONGLONG = "h"
+    UBYTE = "B"
+    BYTE = "b"
 
 class Stream(ABC):
     @abstractmethod
@@ -46,14 +49,19 @@ class Stream(ABC):
 
             self.write_ubyte(value & 0x7F | 0x80)
             value >>= 7
-    
+
     def read_byte(self) -> int:
         return self.read(1)[0]
     
     def read_int(self, num_bytes: int=4, signed=False) -> int:
         # XXX: Move these methods into an enum?
-        return int.from_bytes(self.read(num_bytes), byteorder='big', signed=signed)
-
+        num = int.from_bytes(self.read(num_bytes), byteorder='big')
+        
+        if num & (1 << (32 - 1)) != 0:
+            num -= 1 << 32 
+        
+        return num
+    
     def read_long(self) -> int:
         return self.read_int(8)
     
@@ -124,8 +132,10 @@ class Buffer(Stream, bytearray):
     def read(self, num_bytes: int) -> bytearray:
         if self.pos + num_bytes > len(self):
             raise ValueError(f"Cannot read past end of buffer {self.pos+num_bytes}/{len(self)}")
-        
-        return self[self.pos:self.pos+num_bytes]
+        start = self.pos 
+        self.pos += num_bytes
+
+        return self[start:start+num_bytes]
 
     def write(self, msg: bytearray | bytes):
         self.extend(msg) 
