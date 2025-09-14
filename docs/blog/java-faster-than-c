@@ -1,0 +1,12 @@
+---
+title: "Java can run faster than optimized C code"
+published: false
+---
+
+work in progress
+
+Java is largely assumed to be slower
+than C, but that is not always the case.
+In some contexts, Java can match and even
+outperform C because of JIT compilation
+and garbage collection.
